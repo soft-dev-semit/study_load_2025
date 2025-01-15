@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https:/www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Study load docs</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+</head>
+<body>
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+</nav>
+<div class="login-page">
+    <div class="form">
+        <div th:if="${error}"  style="color: #000000">
+            <div th:text="${error}"></div>
+            <br>
+        </div>
+        <form th:action="@{/login}" method="post" class="login-form">
+            <input type="email" name="username" placeholder="імейл" required/>
+            <input type="password" name="password" placeholder="пароль" required>
+            <input type="submit" value="Увійти"/>
+            <p class="message">Немає акаунта? <a href="/registration">Створіть акаунт</a></p>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <title>Відправка викладачам</title>
+</head>
+<body id="mahBody">
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+    <ul class="menu">
+        <li><a href="/">Головна</a></li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-1" class="toggle">Викладачі</label>
+            <a href=#>Викладачі</a>
+            <input type="checkbox" id="drop-1"/>
+            <ul>
+                <li><a href="/teachers">Перевірити зчитаних з ППС</a></li>
+                <li><a href="/teachers/docs">Розіслати документи</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-3" class="toggle">Налаштування бази даних</label>
+            <a href="#">Налаштування бд</a>
+            <input type="checkbox" id="drop-3"/>
+            <ul>
+                <li><a href="/delete">Очистити БД (Усе зчитане)</a></li>
+                <li><a href="/deleteWithoutTeachers">Очистити БД (викладачі
+                    залишаться)</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-4" class="toggle">Налаштування акаунтів</label>
+            <a href="#">Налаштування акаунтів</a>
+            <input type="checkbox" id="drop-4"/>
+            <ul>
+                <li><a href="/users">Акаунти</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <a href="/help">Довідка</a>
+        </li>
+        <li><a href="/logout">Вийти</a></li>
+    </ul>
+</nav>
+<div id="spinner-container">
+    <div id="loading-spinner"></div>
+</div>
+<div align="center">
+    <p>Надіслати усім заповненим або окремим викладачам</p>
+    <form th:action="@{/teacher/sendPslToAll}" method="post">
+        <input type="submit" value="Надіслати навантаження усім" onclick="blockW()"/>
+    </form>
+    <form th:action="@{/teacher/sendIpToAll}" method="post">
+        <input type="submit" value="Надіслати індивідуальні плани усім" onclick="blockW()"/>
+    </form>
+<p></p>
+    <table style="border-color:#254441;" class="table__prof" border="1" cellpadding="10">
+        <thead>
+        <tr>
+            <th>Викладач</th>
+            <th>Електронна пошта</th>
+            <th>Дата останньої відправки</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="teacher : ${teachers}">
+            <form th:action="@{/teacher/sendIpTo}" method="post">
+                <input type="hidden" th:name="name" th:value="*{teacher.name}"/>
+                <input type="hidden" th:name="email" th:value="*{teacher.getEmailAddress}"/>
+                <td th:text="*{teacher.name}"></td>
+                <td th:text="*{teacher.getEmailAddress}"></td>
+                <td th:text="*{teacher.getEmailedDate}"></td>
+                <td><input type="submit" value="Надіслати індивідуальний план" onclick="blockW()"/></td>
+                <td><input type="submit" formaction="/teacher/sendPslTo" value="Надіслати навантаження" onclick="blockW()"/></td>
+            </form>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+    function blockW() {
+        let body = document.getElementById("mahBody");
+        body.style.opacity = "0.5";
+        body.style.pointerEvents = "none";
+        let spinner = document.getElementById("loading-spinner")
+        spinner.style.display = "block";
+        spinner.style.opacity = "1";
+    }
+
+    function unBlockW() {
+        let body = document.getElementById("mahBody");
+        body.style.opacity = "1";
+        body.style.pointerEvents = "none";
+        let spinner = document.getElementById("loading-spinner")
+        spinner.style.display = "none";
+    }
+</script>
+</html>

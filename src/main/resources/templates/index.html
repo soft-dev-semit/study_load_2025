@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <title>Формування витягів</title>
+</head>
+<body id="mahBody">
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+    <ul class="menu">
+        <li><a href="/">Головна</a></li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-1" class="toggle">Викладачі</label>
+            <a href=#>Викладачі</a>
+            <input type="checkbox" id="drop-1"/>
+            <ul>
+                <li><a href="/teachers">Перевірити зчитаних з ППС</a></li>
+                <li><a href="/teachers/docs">Розіслати документи</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-3" class="toggle">Налаштування бази даних</label>
+            <a href="#">Налаштування бд</a>
+            <input type="checkbox" id="drop-3"/>
+            <ul>
+                <li><a href="/delete">Очистити БД (Усе зчитане)</a></li>
+                <li><a href="/deleteWithoutTeachers">Очистити БД (викладачі
+                    залишаться)</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-4" class="toggle">Налаштування акаунтів</label>
+            <a href="#">Налаштування акаунтів</a>
+            <input type="checkbox" id="drop-4"/>
+            <ul>
+                <li><a href="/users">Акаунти</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <a href="/help">Довідка</a>
+        </li>
+        <li><a href="/logout">Вийти</a></li>
+    </ul>
+</nav>
+<div id="spinner-container">
+    <div id="loading-spinner"></div>
+</div>
+
+<div sec:authorize="hasAnyAuthority('ADMIN')" align="center">
+    Файли для зчитування повинні бути названі латиницею
+    <p>1. Зчитайте навантаження у базу даних</p>
+
+    <form th:action="@{/uploadObs}" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="fileObs">Оберіть Обсяг навантаження</label>
+            <input type="file" id="fileObs" name="file">
+        </div>
+        <div>
+            <button onclick="blockW()">Зчитати у базу даних</button>
+        </div>
+    </form>
+
+    <p>2. Зчитайте посади, звання, ставки викладачів</p>
+    <form th:action="@{/uploadPPS}" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="filePPS">Оберіть ППС+ставки</label>
+            <input type="file" id="filePPS" name="file">
+        </div>
+        <div>
+            <button onclick="blockW()">Зчитати у базу даних</button>
+        </div>
+    </form>
+
+    <p>3. Зчитайте дипломників</p>
+    <form th:action="@{/uploadPS}" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="filePS">Оберіть ПВС+дипломники</label>
+            <input type="file" id="filePS" name="file">
+        </div>
+        <div>
+            <button onclick="blockW()">Зчитати у базу даних</button>
+        </div>
+    </form>
+
+    <p>4. Перевірте зчитане з ППС</p>
+    <a href="/teachers">Перелік викладачів</a>
+
+    <p>5. Сформуйте необхідні файли</p>
+
+    <div class="content">
+        <ul class="content__list">
+            <li class="content__elem">
+                <div class="content__title">
+                    Відомість учбових доручень:
+                </div>
+                <ul class="content__text">
+                    <li>
+                        <form th:action="@{/EdAsSt}" method="post">
+                            <input type="submit" value="Сформувати документ" onclick="blockW()" onended="unBlockW()"/>
+                        </form>
+                    </li>
+                    <div th:if="${eas==true}">
+                        <li>
+                            <form th:action="@{/downloadEAS}">
+                                <input type="submit" value="Завантажити"/>
+                            </form>
+                        </li>
+                    </div>
+                </ul>
+            </li>
+            <li class="content__elem">
+                <div class="content__title">
+                    Навантаження по викладачах:
+                </div>
+                <ul class="content__text">
+                    <li>
+                        <form th:action="@{/PSL}" method="post">
+                            <input type="submit" value="Сформувати документ" onclick="blockW()" onended="unBlockW()"/>
+                        </form>
+                    </li>
+                    <div th:if="${psl==true}">
+                        <li>
+                            <form th:action="@{/downloadPSL}">
+                                <input type="submit" value="Завантажити"/>
+                            </form>
+                        </li>
+                        <li>
+                            <form th:action="@{/uploadPSL}" method="post" enctype="multipart/form-data">
+                                <div>
+                                    <input type="file" name="file">
+                                </div>
+                                <div>
+                                    <button onclick="blockW()">Завантажити редаговане</button>
+                                </div>
+                            </form>
+                        </li>
+                        <li>
+                            <form th:action="@{/downloadSummary}">
+                                <input type="submit" value="Завантажити звіт по кафедрі"/>
+                            </form>
+                        </li>
+                    </div>
+
+                </ul>
+            </li>
+            <li class="content__elem">
+                <div class="content__title">
+                    Індивідуальні плани:
+                </div>
+                <ul class="content__text">
+                    <li>
+                        <form th:action="@{/IP}" method="post">
+                            <input type="submit" value="Сформувати документ" onclick="blockW()" onended="unBlockW()"/>
+                        </form>
+                    </li>
+                    <div th:if="${ip==true}">
+                        <li>
+                            <form th:action="@{/downloadIp}">
+                                <input type="submit" value="Завантажити"/>
+                            </form>
+                        </li>
+                        <li>
+                            <form th:action="@{/uploadIp}" method="post" enctype="multipart/form-data">
+                                <div>
+                                    <input type="file" name="file" multiple>
+                                </div>
+                                <div>
+                                    <button onclick="blockW()">Завантажити редаговане</button>
+                                </div>
+                            </form>
+                        </li>
+                    </div>
+                </ul>
+            </li>
+        </ul>
+        <p>6. Активуйте акаунти викладачів або самостійно розішліть документи</p>
+        <a href="/users">Перелік акаунтів викладачів</a><br>
+        <a href="/teachers/docs">Перелік викладачів для відправки</a>
+
+    </div>
+</div>
+<div sec:authorize="hasAnyAuthority('USER')" align="center">
+    <br>
+    <p>Завантажте індивідуальний план</p>
+    <form th:action="@{/teacher/downloadIp}">
+        <input th:type="hidden" th:name="prof_name" th:value="${#authentication.name}">
+        <input type="submit" value="Завантажити"/>
+    </form>
+    <br>
+    <p>Завантажте навантаження</p>
+    <form th:action="@{/teacher/downloadPsl}">
+        <input th:type="hidden" th:name="prof_name" th:value="${#authentication.name}">
+        <input type="submit" value="Завантажити"/>
+    </form>
+</div>
+</body>
+<script>
+    function blockW() {
+        let body = document.getElementById("mahBody");
+        body.style.opacity = "0.5";
+        body.style.pointerEvents = "none";
+        let spinner = document.getElementById("loading-spinner")
+        spinner.style.display = "block";
+        spinner.style.opacity = "1";
+    }
+
+    function unBlockW() {
+        let body = document.getElementById("mahBody");
+        body.style.opacity = "1";
+        body.style.pointerEvents = "none";
+        let spinner = document.getElementById("loading-spinner")
+        spinner.style.display = "none";
+    }
+</script>
+</html>

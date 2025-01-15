@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <title>Налаштування користувачів</title>
+</head>
+<body>
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+    <ul class="menu">
+        <li><a href="/">Головна</a></li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-1" class="toggle">Викладачі</label>
+            <a href=#>Викладачі</a>
+            <input type="checkbox" id="drop-1"/>
+            <ul>
+                <li><a href="/teachers">Перевірити зчитаних з ППС</a></li>
+                <li><a href="/teachers/docs">Розіслати документи</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-3" class="toggle">Налаштування бази даних</label>
+            <a href="#">Налаштування бд</a>
+            <input type="checkbox" id="drop-3"/>
+            <ul>
+                <li><a href="/delete">Очистити БД (Усе зчитане)</a></li>
+                <li><a href="/deleteWithoutTeachers">Очистити БД (викладачі
+                    залишаться)</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-4" class="toggle">Налаштування акаунтів</label>
+            <a href="#">Налаштування акаунтів</a>
+            <input type="checkbox" id="drop-4"/>
+            <ul>
+                <li><a href="/users">Акаунти</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <a href="/help">Довідка</a>
+        </li>
+        <li><a href="/logout">Вийти</a></li>
+    </ul>
+</nav>
+<div align="center">
+    <p>Активуйте або деактивуйте усіх користувачів</p>
+    <form th:action="@{/user/activateAll}" method="post">
+        <input th:type="hidden" th:name="username" th:value="${#authentication.name}">
+        <input th:type="submit" value="Активувати">
+    </form>
+    <p></p>
+    <form th:action="@{/user/deactivateAll}" method="post">
+        <input th:type="hidden" th:name="username" th:value="${#authentication.name}">
+        <input th:type="submit" value="Деактивувати">
+    </form>
+    <p></p>
+    <table style="border-color:#254441;" class="table__prof" border="1" cellpadding="10">
+        <thead>
+        <tr>
+            <th>Викладач</th>
+            <th>Електронна пошта</th>
+            <th>Статус</th>
+            <th>Дія</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <form th:action="@{/user/activate}" method="post">
+                <td th:text="*{user.name}"></td>
+                <td th:text="*{user.username}"></td>
+                <td th:text="*{user.enabled} ? 'Активовано' : 'Не активовано'"></td>
+                <input th:type="hidden" name="username" th:value="*{user.username}">
+                <td th:if="*{!user.enabled}"><input th:type="submit" value="Активувати"></td>
+                <td th:if="*{user.enabled}"><input th:type="submit" formaction="/user/deactivate" value="Деактивувати"></td>
+            </form>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <title>Довідка</title>
+</head>
+<body>
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+    <ul class="menu">
+        <li><a href="/">Головна</a></li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-1" class="toggle">Викладачі</label>
+            <a href=#>Викладачі</a>
+            <input type="checkbox" id="drop-1"/>
+            <ul>
+                <li><a href="/teachers">Перевірити зчитаних з ППС</a></li>
+                <li><a href="/teachers/docs">Розіслати документи</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-3" class="toggle">Налаштування бази даних</label>
+            <a href="#">Налаштування бд</a>
+            <input type="checkbox" id="drop-3"/>
+            <ul>
+                <li><a href="/delete">Очистити БД (Усе зчитане)</a></li>
+                <li><a href="/deleteWithoutTeachers">Очистити БД (викладачі
+                    залишаться)</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <label for="drop-4" class="toggle">Налаштування акаунтів</label>
+            <a href="#">Налаштування акаунтів</a>
+            <input type="checkbox" id="drop-4"/>
+            <ul>
+                <li><a href="/users">Акаунти</a></li>
+            </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+            <a href="/help">Довідка</a>
+        </li>
+        <li><a href="/logout">Вийти</a></li>
+    </ul>
+</nav>
+<p>1. Оберіть файл обсягу для зчитування, натисніть кнопку "зчитати", дочекайтесь<br>
+    кінця зчитування, після якого вас перенаправить знов на головну.</p>
+<p>2. Теж саме, тільки оберіть файл ППС.</p>
+<p>3. Теж саме, тільки оберіть файл дипломників.</p>
+<p>4. Після цього можна перевірити, чи не було помилок у іменах викладачів. <br>
+    Якщо поле "Ім'я" заповнено, а поле "П.І.Б." – порожнє, то значить помилка у файлі обсягу. <br>
+    Якщо заповнено обидва стовпці, але у першому помилка, виправляти слід у файлі ППС.</p>
+<p>5. При потребі редагувати навантаження по викладачах, завантажте файл, у ньому редагуйте <br>
+    листи, його ж і завантажте назад у базу даних, застосунок сам розіб'є листи у окремі файли.<br>
+    <br>
+    При потребі редагувати індивідуальні плани, завантажте <br>
+    архів, редагуйте необхідний файл, завантажте файл/файли назад.<br>
+    Декілька файлів одразу можна завантажити виділяючи їх за допомогою shift або control.</p>
+<p>ВАЖЛИВО: не змінювати найменування файлів, інкаше застосунок не розпізнає файл.</p>
+<p>
+    Для перевірки, чи зчитано обсяг, можна перейти до переліку викладачів, якщо імена є, а П.І.Б.<br>
+    немає, то це означає, що обсяг було зчитано.<br>
+    Якщо необхідно сформувати заново, перейдіть до вклдаки "налаштування БД"<br>
+    перейдіть за посиланням "очистити БД(усе зчитане)" та очистіть БД.
+</p>
+
+</body>
+</html>

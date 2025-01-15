@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ua"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https:/www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up to Study load docs</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+</head>
+<body>
+<nav>
+    <div id="logo">Study load docs</div>
+    <label for="drop" class="toggle">Menu</label>
+    <input type="checkbox" id="drop"/>
+</nav>
+<div class="login-page">
+    <div class="form">
+        <div style="color: #000000">
+            <div>У поле 'ім'я' вводіть прізвище та ініціали (Зразковенко П.И.)</div>
+            <br>
+        </div>
+        <form th:action="@{/registration}" method="post" class="login-form">
+            <input type="text" placeholder="Ім'я" name="name"/>
+            <input type="text" placeholder="імейл" name="username"/>
+            <input type="password" name="password" id="password" placeholder="пароль"/>
+            <input type="password" id="confirm_password" placeholder="повторіть пароль"/>
+            <input type="submit" value="Зареєструватись"/>
+            <p class="message">Вже зареєстровані? <a href="/login">Увійти</a></p>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    let password = document.getElementById("password")
+        , confirm_password = document.getElementById("confirm_password");
+
+    function validatePassword(){
+        if(password.value !== confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>
+</html>
